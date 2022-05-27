@@ -4,7 +4,7 @@ This project aims at TensorRT Hackathon2022 Contest(https://tianchi.aliyun.com/c
 ## 原始模型
 本小组选择了[CLIP:Contrastive Language-Image Pretraining](https://github.com/openai/CLIP)作为待优化的模型。
 ### 模型简介
-- CLIP模型是OpenAI提出的在图片文本对上训练的模型，利用对比学习的方式完成算法设计，创新点在于将自然语言的抽象概念引入了计算机视觉领域。其本身是一种多模态的模型。
+- CLIP模型是OpenAI提出的在图片文本对上训练的模型，利用对比学习的方式完成算法设计，创新点在于将自然语言的抽象概念引入了计算机视觉领域。其本身是一种多模态的[模型](https://paperswithcode.com/methods/category/vision-and-language-pre-trained-models)。
 - CLIP适用的下游任务十分广泛，根据论文介绍：其可在OCR、视频动作理解等看似不相关的领域取得很好的性能。
 - 其在Zero-shot方面的性能十分强大，在很多数据集上要强于训练后的ResNet50。此外，CLIP还可以通过linear-probe的方式用于物体分类的任务。
 - CLIP可以直接被用于视频中物体的检索。
