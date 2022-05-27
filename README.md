@@ -12,7 +12,7 @@ This project aims at TensorRT Hackathon2022 Contest(https://tianchi.aliyun.com/c
 ![CLIP Approach](imgs/clip-approach.png)
 CLIP主要由上方的文本编码器(text encoder)和下方的图片编码器(image encoder)组成。也是本项目要通过TensorRT加速的部分。  
 
-训练时（上图(1)），通过对比学习的方法，将文本(text)和对应的图片(image)的正确匹配（矩阵中对角线）作为正样本，将其余配对作为负样本。实现利用文本作为图像的监督信号的  
+训练时（上图(1)），通过对比学习的方法，将文本(text)和对应的图片(image)的正确匹配（矩阵中对角线）作为正样本，将其余配对作为负样本。实现利用文本作为图像的监督信号的“自监督训练”。
 
 在做zero-shot推理时，输入的图片经过图片编码器，文本通过提示（prompt）的方式给文本编码器，然后计算最大匹配关系，得到预测的结果。  
 
