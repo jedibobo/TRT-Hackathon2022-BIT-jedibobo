@@ -127,6 +127,9 @@ image_time_pytorch = start.elapsed_time(end)/nRound
 
 &emsp;**结论如下**：tensorrt和torch的加速比，在小batch_size下比较明显。不同batch size下，trt.fp32还略慢于Torch.fp32（除小batch size，而原因未定位到）。其余精度的加速比均大于一。
 
+## model
+模型可以通过链接：https://pan.baidu.com/s/1nVxRFx_-9w-kCzrEaajmJQ 
+提取码：hxcd 下载，如需自己转换模型，可能需注意path的问题。
 
 ## run test
 测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。
