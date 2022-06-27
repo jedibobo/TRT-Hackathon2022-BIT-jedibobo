@@ -141,7 +141,7 @@ sh run_benchmark.sh
 "A BMW car"
 会输出很多结果，其中一张如下图所示：
 
-![output](data\output_torch\sherbrooke_video-2340.jpg)
+![output](https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo/blob/main/data/output_torch/sherbrooke_video-2340.jpg)
 
 ## 经验与体会（可选）
 第一阶段参赛在玮神的提示下一步步地解决问题，感觉学到了很多。中间也像无头苍蝇一样乱撞了差不多1个星期，最后苟进了决赛。
