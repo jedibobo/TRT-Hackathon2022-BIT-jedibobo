@@ -44,6 +44,7 @@ textual部分则由一个token-embedding和position-embedding后经过permute，
 这里参考了一个Github项目[CLIP-ONNX](https://github.com/Lednik7/CLIP-ONNX)，其核心部分如下图所示：
 ### 
 ![CLIP to onnx](imgs/clip2onnx.png)
+
 这里在转换时，加载了CLIP的训练权重。
 ### onnx转tensorrt plan
 &emsp;使用常规的onnx-parser代码就可以成功转换，测试用的tensorrt版本为8.4GA。通过registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga构建。  
