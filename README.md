@@ -134,7 +134,11 @@ image_time_pytorch = start.elapsed_time(end)/nRound
 ```shell
 sh run_benchmark.sh  
 ```
+输入的查询是：
+"A BMW car"
+会输出很多结果，其中一张如下图所示：
 
+![output](data\output_torch\sherbrooke_video-2340.jpg)
 ## 经验与体会（可选）
 第一阶段参赛在玮神的提示下一步步地解决问题，感觉学到了很多。中间也像无头苍蝇一样乱撞了差不多1个星期，最后苟进了决赛。
 个人感觉第一二阶段中间间隔有些短，没来得及学习玮神的代码，把trt的用法吃透。第二阶段自定义模型完全是因为个人原因没充分地开发，后续还会对上述问题进一步改进。
@@ -143,6 +147,7 @@ sh run_benchmark.sh
 ## 应用效果
 
 ## Todo
+- [] 完善下clifs本来构建docker的流程，使用开发用的image构建并在网页端运行查询
 - [] 寻找fp32下，trt在大batch size慢于torch的原因
 - [] 寻找LayerNorm Plugin误差大的原因
 - [] 降低各个精度下的误差
