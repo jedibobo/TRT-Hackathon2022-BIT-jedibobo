@@ -85,6 +85,7 @@ def check(a, b, weak=False, epsilon=1e-5):
 
 &emsp;**结论如下**：使用fp32和tf32精度下勉强能和torch的输出结果对齐，猜测LayerNorm失败的原因可能是内部计算模式和CLIP并不相同。但由于时间问题未定位到原因。
 
+&emsp;在构建clifs应用时，发现在tf32、fp32与fp16精度下，输出的查询结果都和torch一致，所以clifs对输出精度的要求在1e-2量级都是允许的。这是发现比较神奇的事情。
 - 速度结果
 计时的方式为使用torch.cuda.Event()
 结构为：
@@ -125,12 +126,20 @@ image_time_pytorch = start.elapsed_time(end)/nRound
 
 &emsp;**结论如下**：tensorrt和torch的加速比，在小batch_size下比较明显。不同batch size下，trt.fp32还略慢于Torch.fp32（除小batch size，而原因未定位到）。其余精度的加速比均大于一。
 
-测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。  
 
+## run test
+测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。
+一键启动脚本：包含了测试trt精度和torch对比，以及将trt嵌入clifs搜索框架下的表现。
+```shell
+sh run_benchmark.sh  
+```
 
 ## 经验与体会（可选）
 第一阶段参赛在玮神的提示下一步步地解决问题，感觉学到了很多。中间也像无头苍蝇一样乱撞了差不多1个星期，最后苟进了决赛。
 个人感觉第一二阶段中间间隔有些短，没来得及学习玮神的代码，把trt的用法吃透。第二阶段自定义模型完全是因为个人原因没充分地开发，后续还会对上述问题进一步改进。
+
+
+## 应用效果
 
 ## Todo
 - [] 寻找fp32下，trt在大batch size慢于torch的原因
