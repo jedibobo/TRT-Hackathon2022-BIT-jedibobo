@@ -22,8 +22,7 @@ nvidia-docker start -i trt2022 #如果之前创建过container
 ```
 安装环境
 1.首先安装Anaconda（这部分跳过）
-2.安装转onnx环境
-2.安装torch测试的环境。
+2.安装onnx转换和torch测试的环境。
 ```shell
 conda create --name torch python=3.8
 conda activate torch
@@ -34,7 +33,23 @@ pip install -r requirements.txt
 
 git clone https://gitee.com/jedibobo/CLIP-ONNX
 python setup.py install
+
 ```
+3.apt 包安装
+```shell
+apt-get update && apt-get install libgl1
+```
+4.导出onnx文件:
+```shell 
+python onnx/convert_run.py
+```
+
+5.更改clip文件:
+```shell
+cp changes/clip.py /root/anaconda3/envs/torch/lib/python3.8/site-packages/clip/clip.py
+cp changes/model.py /root/anaconda3/envs/torch/lib/python3.8/site-packages/clip/model.py
+```
+Run test
 
 &emsp;测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。
 一键启动脚本：包含了测试trt精度和torch对比，以及将trt嵌入clifs搜索框架下的表现。

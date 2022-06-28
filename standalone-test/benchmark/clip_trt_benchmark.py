@@ -32,7 +32,7 @@ class CLIPTensorRTModel:
     ):
         if name in MODEL_SIZE:
             self._textual_path = "textual.plan"
-            self._visual_path = "visual-tf32.plan"
+            self._visual_path = "visual.plan"
         else:
             raise RuntimeError(
                 f'Model {name} not found or not supports Nvidia TensorRT backend; available models = {list(MODEL_SIZE.keys())}'
@@ -58,7 +58,7 @@ class CLIPTensorRTModel:
             print("Building Visual TRT model.")
             visual_engine = build_engine(
                 runtime=runtime,
-                onnx_file_path='/host/trt2022-final/clipasservice/onnxfile/visual.onnx',
+                onnx_file_path='./visual.onnx',
                 logger=trt_logger,
                 min_shape=(1, 3, MODEL_SIZE[self._name], MODEL_SIZE[self._name]),
                 optimal_shape=(
@@ -85,7 +85,7 @@ class CLIPTensorRTModel:
             print("Building Tesxtual TRT model.")
             text_engine = build_engine(
                 runtime=runtime,
-                onnx_file_path='/host/trt2022-final/clipasservice/onnxfile/textual.onnx',
+                onnx_file_path='./textual.onnx',
                 logger=trt_logger,
                 min_shape=(1, 77),
                 optimal_shape=(768, 77),
