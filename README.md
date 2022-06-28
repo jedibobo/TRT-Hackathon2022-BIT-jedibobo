@@ -33,6 +33,7 @@ pip install /workspace/tensorrt-8.4.1.5-cp38-none-linux_x86_64.whl
 pip install -r requirements.txt
 
 git clone https://gitee.com/jedibobo/CLIP-ONNX
+cd CLIP-ONNX/
 python setup.py install
 
 ```
@@ -158,7 +159,8 @@ repetitions = 30
 timings = np.zeros((repetitions, 1))
 for rep in tqdm.tqdm(range(repetitions)):
     start.record()
-    context.execute_async_v2(bindings, torch.cuda.current_stream().cuda_stream)
+    #model inference process
+    #context.execute_async_v2(bindings, torch.cuda.current_stream().cuda_stream)
     end.record() 
     torch.cuda.synchronize()
     curr_time = start.elapsed_time(end)
