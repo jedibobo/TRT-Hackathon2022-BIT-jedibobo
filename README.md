@@ -154,13 +154,17 @@ def check(a, b, weak=False, epsilon=1e-5):
 ```python
 start = torch.cuda.Event(enable_timing=True)
 end = torch.cuda.Event(enable_timing=True)
-start.record()
-for i in range(nRound):
-    #inference process
-    #model(input) 
-end.record()    
-torch.cuda.synchronize()
-image_time_pytorch = start.elapsed_time(end)/nRound
+repetitions = 30
+timings = np.zeros((repetitions, 1))
+for rep in tqdm.tqdm(range(repetitions)):
+    start.record()
+    context.execute_async_v2(bindings, torch.cuda.current_stream().cuda_stream)
+    end.record() 
+    torch.cuda.synchronize()
+    curr_time = start.elapsed_time(end)
+    timings[rep] = curr_time
+avg = timings.sum()/repetitions
+print("excute time: ",avg)
 ```
 在fp32、tf32和fp16精度下，模型在A10 GPU上的推理速度比较表格如下(batch size=1024(Max input in profile))：
 |  速度   | torch_time/trt_time  | 加速比
