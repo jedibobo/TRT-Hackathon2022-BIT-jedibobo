@@ -6,7 +6,7 @@ This project aims at TensorRT Hackathon2022 Contest(https://tianchi.aliyun.com/c
 &emsp;在原始模型上，选择的是[CLIP:Contrastive Language-Image Pretraining](https://github.com/openai/CLIP)作为待优化的模型。
 
 ### 优化效果
-&emsp;由于clifs应用需要大批次地推理CLIP模型的visual部分，所以对于该部分进行了优化，在最常见batch size下，可以取得0.83(fp32)~3.22(fp16)倍的加速比,且由于clifs搜索的方式，三种精度下都允许有近10倍的误差，都不会造成搜索结果的变动，能满足视频搜索的需求。
+&emsp;由于clifs应用需要大批次地推理CLIP模型的visual部分，所以对于该部分进行了优化，在最常见batch size下，可以取得0.83(fp32)~3.22(fp16)倍的加速比,且由于clifs搜索的方式，三种精度下都允许有近10倍的误差(相比于标准情况，fp32：1e-6，fp16：1e-3)，都不会造成搜索结果的变动，能满足视频搜索的需求。
 
 ### Setup & Run
 &emsp;环境构建
