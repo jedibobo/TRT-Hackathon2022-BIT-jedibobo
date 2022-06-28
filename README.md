@@ -1,8 +1,53 @@
 # TRT-Hackathon2022-BIT-jedibobo
 This project aims at TensorRT Hackathon2022 Contest(https://tianchi.aliyun.com/competition/entrance/531953/information))
 
+## 总述
+### 原始模型
+&emsp;在原始模型上，选择的是[CLIP:Contrastive Language-Image Pretraining](https://github.com/openai/CLIP)作为待优化的模型。
+
+### 优化效果
+&emsp;由于clifs应用需要大批次地推理CLIP模型的visual部分，所以对于该部分进行了优化，在最常见batch size下，可以取得0.83(fp32)~3.22(fp16)倍的加速比,且由于clifs搜索的方式，三种精度下都允许有近10倍的误差，都不会造成搜索结果的变动，能满足视频搜索的需求。
+
+### Setup & Run
+&emsp;环境构建
+拉取trt8.4GA的docker：
+```shell
+nvidia-docker pull registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga
+```
+启动docker,并挂载目录：
+```shell
+nvidia-docker run -it --name trt2022 -v ${CODE_REPO_PATH}:/target registry.cn-hangzhou.aliyuncs.com/trt2022/trt-8.4-ga
+
+nvidia-docker start -i trt2022 #如果之前创建过container
+```
+安装环境
+1.首先安装Anaconda（这部分跳过）
+2.安装转onnx环境
+2.安装torch测试的环境。
+```shell
+conda create --name torch python=3.8
+conda activate torch
+conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch-lts -c nvidia
+pip config set global.index-url https://mirrors.bfsu.edu.cn/pypi/web/simple
+pip install /workspace/tensorrt-8.4.1.5-cp38-none-linux_x86_64.whl
+pip install -r requirements.txt
+
+git clone https://gitee.com/jedibobo/CLIP-ONNX
+python setup.py install
+```
+
+&emsp;测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。
+一键启动脚本：包含了测试trt精度和torch对比，以及将trt嵌入clifs搜索框架下的表现。
+```shell
+sh run_benchmark.sh  
+```
+输入的查询是：
+"A BMW car"
+会输出很多结果，其中一张如下图所示：
+
+![output](https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo/blob/main/data/output_torch/sherbrooke_video-2340.jpg)
 ## 原始模型
-本小组选择了[CLIP:Contrastive Language-Image Pretraining](https://github.com/openai/CLIP)作为待优化的模型。
+&emsp;本小组选择了[CLIP:Contrastive Language-Image Pretraining](https://github.com/openai/CLIP)作为待优化的模型。
 ### 模型简介
 - CLIP模型是OpenAI提出的在图片文本对上训练的模型，利用对比学习的方式完成算法设计，创新点在于将自然语言的抽象概念引入了计算机视觉领域。其本身是一种多模态的[模型](https://paperswithcode.com/methods/category/vision-and-language-pre-trained-models)。
 - CLIP适用的下游任务十分广泛，根据论文介绍：其可在OCR、视频动作理解等看似不相关的领域取得很好的性能。
@@ -12,11 +57,11 @@ This project aims at TensorRT Hackathon2022 Contest(https://tianchi.aliyun.com/c
 ![CLIP Approach](imgs/clip-approach.png)
 CLIP主要由上方的文本编码器(text encoder)和下方的图片编码器(image encoder)组成。也是本项目要通过TensorRT加速的部分。  
 
-训练时（上图(1)），通过对比学习的方法，将文本(text)和对应的图片(image)的正确匹配（矩阵中对角线）作为正样本，将其余配对作为负样本。实现利用文本作为图像的监督信号的“自监督训练”。
+&emsp;训练时（上图(1)），通过对比学习的方法，将文本(text)和对应的图片(image)的正确匹配（矩阵中对角线）作为正样本，将其余配对作为负样本。实现利用文本作为图像的监督信号的“自监督训练”。
 
-在做zero-shot推理时，输入的图片经过图片编码器，文本通过提示（prompt）的方式给文本编码器，然后计算最大匹配关系，得到预测的结果。  
+&emsp;在做zero-shot推理时，输入的图片经过图片编码器，文本通过提示（prompt）的方式给文本编码器，然后计算最大匹配关系，得到预测的结果。  
 
-本文也找到了一个CLIP用于视频中检索物体的[例子](https://github.com/johanmodin/clifs)，认为其具有潜在的应用价值。
+&emsp;本文也找到了一个CLIP用于视频中检索物体的[例子](https://github.com/johanmodin/clifs)，认为其具有潜在的应用价值。
 
 
 
@@ -131,17 +176,7 @@ image_time_pytorch = start.elapsed_time(end)/nRound
 模型可以通过链接：https://pan.baidu.com/s/1nVxRFx_-9w-kCzrEaajmJQ 
 提取码：hxcd 下载，如需自己转换模型，可能需注意path的问题。
 
-## run test
-测试代码为：test_trt.py 修改clip_trt.py中加载的plan模型修改推理时trt的精度，通过load中的use_FP16参数指定Torch的推理精度。
-一键启动脚本：包含了测试trt精度和torch对比，以及将trt嵌入clifs搜索框架下的表现。
-```shell
-sh run_benchmark.sh  
-```
-输入的查询是：
-"A BMW car"
-会输出很多结果，其中一张如下图所示：
 
-![output](https://github.com/jedibobo/TRT-Hackathon2022-BIT-jedibobo/blob/main/data/output_torch/sherbrooke_video-2340.jpg)
 
 ## 经验与体会（可选）
 第一阶段参赛在玮神的提示下一步步地解决问题，感觉学到了很多。中间也像无头苍蝇一样乱撞了差不多1个星期，最后苟进了决赛。
