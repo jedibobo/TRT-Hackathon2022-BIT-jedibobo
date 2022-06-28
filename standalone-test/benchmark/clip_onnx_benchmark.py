@@ -9,8 +9,8 @@ def available_models() -> List[str]:
 class CLIPOnnxModel:
     def __init__(self, name: str = None):
         if name in MODEL_SIZE:
-            self._textual_path = '/host/trt2022-final/clipasservice/onnxfile/visual.onnx'
-            self._visual_path = '/host/trt2022-final/clipasservice/onnxfile/textual.onnx'
+            self._textual_path = './visual.onnx'
+            self._visual_path = './textual.onnx'
         else:
             raise RuntimeError(
                 f'Model {name} not found; available models = {available_models()}'
