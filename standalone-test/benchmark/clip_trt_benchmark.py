@@ -29,10 +29,11 @@ class CLIPTensorRTModel:
     def __init__(
         self,
         name: str = None,
+        precision: str = 'fp32',
     ):
         if name in MODEL_SIZE:
             self._textual_path = "textual.plan"
-            self._visual_path = "visual.plan"
+            self._visual_path = "visual-"+precision+".plan"
         else:
             raise RuntimeError(
                 f'Model {name} not found or not supports Nvidia TensorRT backend; available models = {list(MODEL_SIZE.keys())}'
@@ -42,7 +43,7 @@ class CLIPTensorRTModel:
     def  start_engines(self,use_fp16=False):
         import torch
 
-        trt_logger: Logger = trt.Logger(trt.Logger.VERBOSE)
+        trt_logger: Logger = trt.Logger(trt.Logger.ERROR)
         runtime: Runtime = trt.Runtime(trt_logger)
         compute_capacity = torch.cuda.get_device_capability()
 

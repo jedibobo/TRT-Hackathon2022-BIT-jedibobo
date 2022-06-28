@@ -216,7 +216,7 @@ def infer_tensorrt(
         curr_time = start.elapsed_time(end)
         timings[rep] = curr_time
     avg = timings.sum()/repetitions
-    print("excute time: ",avg,"s")
+    # print("excute time: ",avg)
 
     torch.cuda.current_stream().synchronize()  # sync all CUDA ops
     return output_tensors, avg

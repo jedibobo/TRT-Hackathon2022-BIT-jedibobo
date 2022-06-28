@@ -8,8 +8,20 @@ import time
 import numpy as np
 import tqdm
 from PIL import Image
+import argparse
 os.environ['MODEL'] = 'ViT-B/32'
 
+
+parser = argparse.ArgumentParser()
+#type是要传入的参数的数据类型  help是该参数的提示信息
+parser.add_argument('--bs', type=int, help='batch size')
+parser.add_argument('--trt_precision', type=str, choices=['fp32','tf32','fp16'],help='batch size')
+parser.add_argument('--torch_fp16', type=bool, default= False,help='precision of torch')
+args = parser.parse_args()
+
+print("batch size: ",args.bs)
+print("tensorrt precision: ",args.trt_precision)
+print("torch fp16: ",args.torch_fp16)
 
 def check(a, b, weak=False, epsilon=1e-5):
     if weak:
@@ -26,19 +38,19 @@ def check(a, b, weak=False, epsilon=1e-5):
 # batch first
 
 
-nRound = 10
+nRound = 30
 
 print("================testing model in torch================")
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model, preprocess = clip.load(
-    os.getenv('MODEL'), device, jit=False, use_fp16=False)
+    os.getenv('MODEL'), device, jit=False, use_fp16=args.torch_fp16)
 image_inputs = preprocess(Image.open("CLIP.png")).unsqueeze(
     0).to(device)  # [1, 3, 224, 224]
 # logging.info('using model: {}'.format(os.getenv('MODEL')))
 # print(image_inputs.dtype)
 print("using model: {}, precision {}".format(
     os.getenv('MODEL'), model.visual.conv1.weight.dtype))
-image_inputs = image_inputs.repeat(64, 1, 1, 1)
+image_inputs = image_inputs.repeat(args.bs, 1, 1, 1)
 # print(image_inputs)
 # raise
 start = torch.cuda.Event(enable_timing=True)
@@ -65,7 +77,7 @@ torch.cuda.empty_cache()
 time.sleep(5)
 
 print("================testing model in tensorrt================")
-trt_model = CLIPTensorRTModel("ViT-B/32")
+trt_model = CLIPTensorRTModel("ViT-B/32",precision=args.trt_precision)
 trt_model.start_engines(use_fp16=False)
 # print(type(image_features_torch))
 
@@ -73,7 +85,7 @@ trt_model.start_engines(use_fp16=False)
 # torch.cuda.synchronize()
 # t0 = time.time_ns()
 
-_,image_time_trt= trt_model.encode_image(image_inputs)  # .cpu().detach().numpy()
+image_features_trt,image_time_trt= trt_model.encode_image(image_inputs)  # .cpu().detach().numpy()
 
 # t1 = time.time_ns()
 
@@ -81,7 +93,10 @@ print('Torch time:', image_time_pytorch)
 print('TensorRT time:', image_time_trt)
 print('Speedup:', image_time_pytorch / image_time_trt)
 
-image_features_trt,_ = trt_model.encode_image(
-    image_inputs)
+# image_features_trt,_ = trt_model.encode_image(
+#     image_inputs)
 image_features_trt = image_features_trt[0].cpu().contiguous().numpy()
 check(image_features_trt, image_features_torch)
+
+print("===============================================================")
+print("\n\n\n")
