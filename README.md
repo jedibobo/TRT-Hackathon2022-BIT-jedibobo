@@ -210,3 +210,8 @@ print("excute time: ",avg)
 - [] 寻找LayerNorm Plugin误差大的原因
 - [] 降低各个精度下的误差
 - [] 使用fastertransformer repo优化本工程
+
+## Reference Repos
+- https://github.com/openai/CLIP
+- https://github.com/jina-ai/clip-as-service
+- https://github.com/johanmodin/clifs
